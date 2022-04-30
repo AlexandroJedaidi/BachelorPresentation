@@ -1,0 +1,293 @@
+\section{Numerischer Lösungsansatz}
+
+\begin{frame}{Numerische Verfahren}
+    \begin{itemize}
+        \item<1-> Gesucht ist ein Verfahren zur Approximation einer Lösung des Anfangswertproblems
+        \eqref{awp-erste-ordnung}
+        \item<2-> Eine Möglichkeit sind hierbei die \textbf{Einschrittverfahren} und \textbf{Mehrschrittverfahren}.
+    \end{itemize}
+\end{frame}
+
+\subsection{Einschrittverfahren}
+
+\begin{frame}{Einschrittverfahren}
+    \begin{itemize}
+        \item<1-> Ein explizites \textbf{Einschrittverfahren} für das Anfangswertproblem \eqref{awp-erste-ordnung} auf
+        einer Diskretisierung $D_{\text{h}}=\{t_i=t_0+ih, i=0,\dots,N\}$ des Zeitintervalls $D=[t_0,t_0+a]$ und der
+        Schrittweite $h=\frac{a}{N}$ hat die Form
+        \begin{align}
+            \label{einschrittverfahren}
+            u_0 &= x_0 \nonumber \\
+            u_{i+1} &= u_i + h \Phi(t_i,u_i, h, f), \quad i=0,\dots,N.
+        \end{align}
+        \item<2-> Mit $K\subseteq \mathbb{R}^n$ heißt
+        $\Phi: D_{\text{h}} \times \mathbb{R}^n \times \mathbb{R} \times
+        C(D \times K, \mathbb{R}^n) \rightarrow \mathbb{R}^n$ \textbf{Inkrementfunktion}
+        \item Die Inkrementfunktion $\Phi$ von impliziten Einschrittverfahren hängt zusätzlich von $u_{i+1}$ ab.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Einschrittverfahren: Lokaler Diskretisierungsfehler}
+    \begin{itemize}
+        \item<1-> Der \textbf{lokale Diskretisierungsfehler} für das Einschrittverfahren \eqref{einschrittverfahren} ist
+        definiert als
+        \begin{align}
+            \label{lokaler-fehler}
+            \tau(\hat{t},h) := \frac{x(\hat{t} + h)-u_1(\hat{t})}{h}
+        \end{align}
+        für $\hat{t} \in [t_0, t_+a]$ und $u_1(\hat{t})=x(\hat{t})+h\Phi(\hat{t},x(\hat{t}),h,f)$.
+        \item<2-> Das Einschrittverfahren heißt \textbf{konsistent} (von der Ordnung p), wenn für alle
+        $\hat{t}\in(t_0,t_0+a]$
+        \[
+            \lim_{h \rightarrow 0 } \tau(\hat{t}, h)=0 \quad (\tau(\hat{t},h) = \mathcal{O}(h^p) \text{ für } h \rightarrow 0)
+        \]
+        gilt.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Einschrittverfahren: Globaler Diskretisierungsfehler}
+    \begin{itemize}
+        \item<1-> Der \textbf{globale Diskretisierungsfehler} für das Einschrittverfahren \eqref{einschrittverfahren} ist
+        definiert als
+        \begin{align}
+            \label{globaler-fehler}
+            e(\hat{t}, h) := x(\hat{t}) - u_i.
+        \end{align}
+
+        \item<2-> Das Einschrittverfahren heißt \textbf{konvergent} (von der Ordnung p), wenn für alle
+        $\hat{t}\in(t_0,t_0+a]$
+        \[
+            \lim_{h \rightarrow 0 } e(\hat{t}, h)=0 \quad (e(\hat{t},h) = \mathcal{O}(h^p) \text{ für } h \rightarrow 0)
+        \]
+        gilt.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Einschrittverfahren: Fehlerabschätzung}
+    \begin{itemize}
+        \item<1-> Für ein Einschrittverfahren \eqref{einschrittverfahren} mit Lipschitz-stetiger Inkrementfunktion im
+        zweiten Argument gilt die Abschätzung
+        \[
+            \left\lVert e(t_i,h) \right\rVert_2 \leq \left( \left\lVert e_0 \right\rVert_2 + (t_i-t_0)\tau_h \right)
+            e^{L(t_i-t_0)}, \quad i = 1, \dots, N
+        \]
+        mit $e_0 = x(t_0)-u_0$ und $\tau_h= \max\limits_{k=1,\dots,N} \left\lVert \tau(t_k,h) \right\rVert_2 $.
+        \item<2-> Die Abschätzung besagt, dass die Konsistenz des Einschrittverfahrens bereits die Konvergenz impliziert.
+    \end{itemize}
+\end{frame}
+
+\subsection{Runge-Kutta-Verfahren}
+
+\begin{frame}{Explizite Runge-Kutta-Verfahren}
+    \begin{itemize}
+        \item<1-> Ein m-stufiges, explizites \textbf{Runge-Kutta-Verfahren} ist ein Einschrittverfahren der Form
+        \begin{align*}
+            u_{i+1}&=u_i+h\sum_{l=1}^{m}b_{l}k_{l,i}\\
+        \end{align*}
+        mit den Stufen
+        \begin{align*}
+            k_{1,i} &= f(t_i,u_i)\\
+            k_{l,i} &= f(t_i+c_lh, u_i + h\sum_{j=1}^{l-1}a_{lj}k_{j,i} ), \quad l=2,\dots,m.
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Implizite Runge-Kutta-Verfahren}
+    \begin{itemize}
+        \item<1-> Ein m-stufiges, implizites Runge-Kutta-Verfahren hat die Form
+        \begin{align*}
+            k_{1,i} &= f(t_i+c_1h, u_i + h(a_{11}k_{1,i} + \dots + a_{1m} k_{m,i})) \\
+            &\vdots\\
+            k_{m,i} &= f(t_i+c_mh, u_i + h(a_{m1}k_{1,i} + \dots + a_{mm} k_{m,i}))\\
+            u_{i+1} &= u_i + h(b_1 k_{1,i} + \dots + b_m k_{m,i})
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Butcher-Tabellen}
+    \begin{itemize}
+        \item<1-> Die Koeffizienten $c,b,A$ der Runge-Kutta-Verfahren werden in Butcher-Tabellen zusammengefasst
+        \begin{center}
+            \begin{tabular}{c | c}
+                c & A \\
+                \hline
+                & $b^{\intercal}$
+            \end{tabular}
+        \end{center}
+        \item Das \textbf{Verfahren von Heun} der Form
+        \[
+            u_{i+1}=h\left(\frac{1}{2}f(t_i,u_i)+\frac{1}{2}f(t_i+h,u_i+hf(t_i,u_i))\right)
+        \]
+        hat die Butcher-Tabelle
+        \begin{center}
+            \begin{tabular}{c | c c}
+                0 & 0 & 0 \\
+                $1$ & 1 & 0 \\
+                \hline
+                & $\frac{1}{2}$ & $\frac{1}{2}$
+            \end{tabular}
+        \end{center}
+    \end{itemize}
+\end{frame}
+
+%\begin{frame}{Runge-Kutta-Verfahren: Konsistenz}
+%    \begin{itemize}
+%        \item<1-> Ein explizites Runge-Kutta-Verfahren ist invariant gegenüber Autonomisierung, wenn gilt:
+%        es approximiert das Anfangswertproblem \eqref{awp-erste-ordnung} mit der Näherungslösung $u_i$
+%        $\Leftrightarrow$ es approximiert das autonomisierte Anfangswertproblem
+%        \begin{alignat*}{3}
+%            z^{\prime} &= 1, \qquad &z(t_0) &= t_0, \\
+%            x^{\prime} &= f(z,x),\qquad  &x(t_0) &= x_0 \\
+%        \end{alignat*}
+%        mit der Näherungslösung $v_i := \left[ \begin{matrix} t_i\\ u_i\\ \end{matrix} \right]$.
+%        \item<2-> Ein explizites Runge-Kutta-Verfahren mit den Bedingungen
+%        \[
+%            \sum_{j=1}^{m} b_j = 1 \qquad \text{und} \qquad c_l=\sum_{j=1}^{l-1} a_{lj}, \quad l = 1, \dots, m
+%        \]
+%        ist invariant gegenüber Autonomisierung.
+%    \end{itemize}
+%\end{frame}
+
+\begin{frame}{Runge-Kutta-Verfahren: Konsistenz}
+    \begin{itemize}
+        \item<1-> Für die maximale erreichbare Konsistenzordnung eines expliziten Runge-Kutta-Verfahrens mit m Stufen
+        gilt
+        \[
+            p \leq m.
+        \]
+        \item<2-> Die Konsistenzordnung und die Stufenanzahl haben die Zusammenhänge
+        \begin{center}
+            \begin{tabular}{ c | c | c }
+                Stufe $m$ & 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \quad 9 & \quad $\geq 9$ \\
+                \hline
+                Ordnung p & 1 \quad 2 \quad 3 \quad 4 \quad 4 \quad 5 \quad 6 \quad 6 \quad 7 & \quad  $\leq m-2$
+            \end{tabular}
+        \end{center}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Runge-Kutta-Verfahren: Schrittweitensteuerung}
+    \begin{itemize}
+        \item<1-> Zur Steuerung der Schrittweite \textbf{h} werden \textbf{eingebettete} Runge-Kutta-Verfahren der Ordnung
+        $p$ und $p+1$ verwendet, um den lokalen Fehler abschätzen zu können.
+        \item<2-> Bei zu großem Fehler wird eine kleinere Schrittweite $h_{\text{neu}}<h_{\text{alt}}$ gewählt und der
+        aktuelle Schritt wird wiederholt.
+        \item<3-> Bei zu kleinem Fehler wird die Schrittweite mit Hilfe einer Hochschaltungsbeschränkung $q$ angepasst.
+        Hierbei setzt man $h_{\text{neu}}=\min(qh_{\text{alt}}, h_{\text{max}})$ mit dem Hochschaltungsfaktor $q>1$.
+        \item<4-> Der aktuelle Schritt wird akzeptiert, wenn der geschätzte Fehler kleiner als die Toleranz $\epsilon>0$
+        ist.
+    \end{itemize}
+\end{frame}
+
+\subsection{Mehrschrittverfahren}
+
+\begin{frame}{Mehrschrittverfahren}
+    \begin{itemize}
+        \item<1-> Neben Einschrittverfahren gibt es auch \textbf{Mehrschrittverfahren} bzw. \textbf{k-Schrittverfahren}
+        der Form
+        \begin{align*}
+            &\text{Startwerte } u_0, \dots, u_{k-1} \in \mathbb{R}^n, \nonumber \\
+            & \sum_{j=0}^{k} \alpha_j u_{i+j} = h \phi(t_i, u_i, \dots, u_{i+k},h,f), \quad i=0,\dots,N-k
+        \end{align*}
+        mit $\alpha_k\neq0$.
+        \item<2-> Falls die Inkrementfunktion $\Phi$ unabhängig von $u_{i+k}$ ist, nennt man das k-Schrittverfahren
+        explizit, sonst implizit.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Lineare Mehrschrittverfahren}
+    \begin{itemize}
+        \item<1-> Ein lineares k-Schrittverfahren hat die Form
+        \begin{align}
+              \label{k-schritt-linear}
+              \sum_{j=0}^{k} \alpha_j u_{i+j} = h \sum_{j=0}^{k} \beta_j f(t_{i+j}, u_{i+j}), \quad i = 0, \dots, N-k.
+        \end{align}
+        \item<2-> Für $\beta_k=0$ ist das Verfahren explizit, sonst implizit.
+        \item<3-> Ein lineares k-Schrittverfahren vom Typ (r,l) hat die Form
+        \begin{align*}
+            u_{i+k}-u_{i+r-l} = h \sum_{j=0}^{r} \beta_j^{(r,l)} f(t_{i+j},u_{i+j}),
+        \end{align*}
+        mit
+        \[
+            \beta_j^{(r,l)} := \int\limits_{-l}^{k-r} \prod\limits_{\underset{q \neq j}{q=0}}^{r} \frac{(r-q+x)}{(j-q)}\ dx.
+        \]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Mehrschrittverfahren: Konsistenz}
+    \begin{itemize}
+        \item<1-> Der lokale Diskretisierungsfehler eines Mehrschrittverfahrens ist gegeben durch
+        \[
+            \tau(t_i,h) = \frac{1}{h} \sum_{j=0}^{k} \alpha_j x(t_i + jh) -
+            \phi (t_i,x(t_i), x(t_i+h), \dots, x(t_i+kh),h,f).
+        \]
+        \item<2-> Das Mehrschrittverfahren ist konsistent von der Ordnung $p\geq 1$, wenn für alle f mit
+        stetiger und beschränkter Ableitung im zweiten Argument bis zur Ordnung $p$ gilt, dass
+        $\tau(t_i,h) = \mathcal{O}(h^p)$.
+        \item<3-> Das lineare Mehrschrittverfahren vom Typ (r,l) hat die Konsistenzordnung $p=r+1$, falls die rechte
+        Seite $f$ (r+1)-mal stetig-differenzierbar auf $D \times K$, $K\subseteq \mathbb{R}^n$, ist.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Mehrschrittverfahren: Konsistenz}
+    \begin{itemize}
+        \item<1-> Für ein lineares \textit{k-Schrittverfahren} sind die Polynome
+        \[
+            \rho(z) := \sum_{j=0}^{k} \alpha_j z^j \qquad \text{und} \qquad \sigma(z) := \sum_{j=0}^{k} \beta_j z^j
+        \]
+        definiert.
+        \item<2-> Das Polynom $\rho$ nennt man das erste charakteristische Polynom und $\sigma$ das zweite charakteristische
+    Polynom des gegebenen Verfahrens.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Mehrschrittverfahren: Konsistenz}
+    Für ein lineare k-Schrittverfahren sind folgende Aussagen äquivalent:
+    \begin{align*}
+        &\text{1. Das lineare k-Schrittverfahren ist konsistent von der Ordnung p.}\\
+        &\text{2. Für das Anfangswertproblem }
+        x^{\prime} = x, \text{ }
+        x(0) = 1
+        \text{ gilt } \tau(t_i,h) = \mathcal{O}(h^p).\\
+        &\text{3. } \frac{\rho(z)}{\ln(z)} - \sigma(z) \text{ hat eine $p$-fache Nullstelle in } z= 1,\\
+        &\text{ d.h. }
+        \frac{\rho(z)}{\ln(z)} - \sigma(z) = \mathcal{O}((z-1)^p) \quad \text{ für } z \rightarrow 0.\\
+        &\text{4. } \sum_{j=0}^{k} \alpha_j = 0 \quad \text{ und} \quad
+        \sum_{j=0}^{k} j^m \alpha_j = \sum_{j=0}^{k} mj^{m-1} \beta_j,  \quad \text{für } m=0,1 \dots, p.
+    \end{align*}
+\end{frame}
+
+\begin{frame}
+    \begin{itemize}
+        \item<1-> Ein Mehrschrittverfahren ist konvertgent (von der Ordnung p), also
+        \[
+            \left\lVert x(t_i) - u_i \right\rVert_2 = \mathcal{O}(h^p), \text{ für } t_i=t_0+ih \in [t_0,t_0+a],
+        \]
+        wenn es stabil TODO:cite stabilität und konsistent ist.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Mehrschrittverfahren für steife Differentialgleichungen}
+    \begin{itemize}
+        \item<1-> Eine lineare Differentialgleichung $x^{\prime}(t)=Ax(t)+g(t)$ heißt steif, wenn gilt:
+        \begin{align*}
+            1.& \quad Re(\lambda_j(A)) < 0, \qquad \text{ für alle Eigenwerte } \lambda_j(A) \text{ von A, }\\
+            2.& \quad \min\limits_{1 \leq j \leq n} Re(\lambda_j(A)) \ll \max\limits_{1 \leq j \leq n} Re(\lambda_j(A)).
+        \end{align*}
+        \item<2-> Für steife Differentialgleichungen eignen sich \textbf{Rückwärtsdifferenzenverfahren}
+        (engl: backward differentiation formula oder BDF) besonders gut zur Approximation
+        \item<3-> BDF Verfahren sind implizite Mehrschrittverfahren und haben die Form
+        \[
+            \sum_{j=0}^{k}\alpha_j u_{i+j} = h f(t_{i+k}, u_{i+k})
+        \]
+        mit
+        \[
+            \alpha_j = h \mathcal{L}^{\prime}_{i+j} (t_{i+k}), \quad j=0,\dots,k.
+        \]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    TODO: Beispiel hier oder anwendung?
+\end{frame}
+
