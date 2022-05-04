@@ -109,7 +109,7 @@
         \item<1-> Die Koeffizienten $c,b,A$ der Runge-Kutta-Verfahren werden in Butcher-Tabellen zusammengefasst
         \begin{center}
             \begin{tabular}{c | c}
-                c & A \\
+                c & A               \\
                 \hline
                 & $b^{\intercal}$
             \end{tabular}
@@ -121,8 +121,8 @@
         hat die Butcher-Tabelle
         \begin{center}
             \begin{tabular}{c | c c}
-                0 & 0 & 0 \\
-                $1$ & 1 & 0 \\
+                0   & 0             & 0             \\
+                $1$ & 1             & 0             \\
                 \hline
                 & $\frac{1}{2}$ & $\frac{1}{2}$
             \end{tabular}
@@ -158,7 +158,7 @@
         \item<2-> Die Konsistenzordnung und die Stufenanzahl haben die Zusammenhänge
         \begin{center}
             \begin{tabular}{ c | c | c }
-                Stufe $m$ & 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \quad 9 & \quad $\geq 9$ \\
+                Stufe $m$ & 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \quad 9 & \quad $\geq 9$  \\
                 \hline
                 Ordnung p & 1 \quad 2 \quad 3 \quad 4 \quad 4 \quad 5 \quad 6 \quad 6 \quad 7 & \quad  $\leq m-2$
             \end{tabular}
@@ -199,8 +199,8 @@
     \begin{itemize}
         \item<1-> Ein lineares k-Schrittverfahren hat die Form
         \begin{align}
-              \label{k-schritt-linear}
-              \sum_{j=0}^{k} \alpha_j u_{i+j} = h \sum_{j=0}^{k} \beta_j f(t_{i+j}, u_{i+j}), \quad i = 0, \dots, N-k.
+            \label{k-schritt-linear}
+            \sum_{j=0}^{k} \alpha_j u_{i+j} = h \sum_{j=0}^{k} \beta_j f(t_{i+j}, u_{i+j}), \quad i = 0, \dots, N-k.
         \end{align}
         \item<2-> Für $\beta_k=0$ ist das Verfahren explizit, sonst implizit.
         \item<3-> Ein lineares k-Schrittverfahren vom Typ (r,l) hat die Form
@@ -237,7 +237,7 @@
         \]
         definiert.
         \item<2-> Das Polynom $\rho$ nennt man das erste charakteristische Polynom und $\sigma$ das zweite charakteristische
-    Polynom des gegebenen Verfahrens.
+        Polynom des gegebenen Verfahrens.
     \end{itemize}
 \end{frame}
 
@@ -287,7 +287,63 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-    TODO: Beispiel hier oder anwendung?
+\begin{frame}{Beispiel: Steife Differentialgleichung}
+    \begin{itemize}
+        \item<1-> Gegebenes Anfangswertproblem
+        \begin{align}
+            \label{stiff}
+            x_{1}^{\prime} &= \frac{1}{2} ((\lambda_1 + \lambda_2)x_1 + (\lambda_1 - \lambda_2)x_2), \nonumber \\
+            x_{2}^{\prime} &= \frac{1}{2} ((\lambda_1 - \lambda_2)x_1 + (\lambda_1 + \lambda_2)x_2), \\
+            x_1(0) &= c_1 + c_2, \quad x_2(0) = c_1 - c_2 \nonumber
+        \end{align}
+        mit $\lambda_1, \lambda_2 < 0$ und $c_1,c_2 \in \mathbb{R}$.
+        \item<2-> Die Matrix
+        \[
+            A = \frac{1}{2}
+            \begin{bmatrix}
+                \lambda_1 + \lambda_2 & \lambda_1 - \lambda_2 \\
+                \lambda_1 - \lambda_2 & \lambda_1 + \lambda_2
+            \end{bmatrix}
+        \]
+        hat die Eigenwerte $\lambda_1$ und $\lambda_2$.
+    \end{itemize}
 \end{frame}
 
+\begin{frame}{Beispiel: Steife Differentialgleichung}
+    \begin{itemize}
+        \item<1-> Für $\lambda_1=-100$ und $\lambda_2=-1$ ist \eqref{stiff} steif.
+        \item<2-> Die Lösung für \eqref{stiff} ist explizit gegeben mit
+        \[
+            x(t) =
+            \begin{bmatrix}
+                c_1 e^{\lambda_1 t} + c_2 e^{\lambda_2 t} \\
+                c_1 e^{\lambda_1 t} - c_2 e^{\lambda_2 t}
+            \end{bmatrix}.
+        \]
+        \item<3-> Für $t \rightarrow \infty$ konvergiert der erste Summand schneller gegen $0$.
+        \item<4-> Zur Approximation von \eqref{stiff} wird der explizite Euler verwendet
+        \begin{align*}
+            u_0 &= x_0 \\
+            u_i &= u_{i-1} + hAu_{i-1}= \dots = (I + hA)^{i}u_0, \qquad i=1,\dots,N
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Beispiel: Steife Differentialgleichung}
+    \begin{itemize}
+        \item<1-> Die numerische Lösung hat die Form
+        \begin{align*}
+            u_{i}=
+            \begin{bmatrix}
+                c_1 (1+h\lambda_1)^{i} + c_2 (1+h\lambda_2)^{i}\\
+                c_1 (1+h\lambda_1)^{i} + c_2 (1+h\lambda_2)^{i}
+            \end{bmatrix}.
+        \end{align*}
+        \item<2-> Die numerische Lösung und die exakte Lösung besitzen das gleiche Grenzverhalten, wenn
+        $|1+h\lambda_1|<1$ und $|1+h\lambda_2|<1$ bzw. $h<\frac{2}{|\lambda_1|}$ und $h<\frac{2}{|\lambda_2|}$ gilt.
+        \item<3-> $\lambda_1$ bestimmt über die Beschränkung der Schrittweite, da $|\lambda_2| \ll |\lambda_1|$ gilt.
+        \begin{itemize}
+            \item<1-> Jedoch hat der Summand mit $\lambda_1$ für größere Zeiten $t$ fast keinen Einfluss auf die Lösung.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
